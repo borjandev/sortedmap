@@ -14,13 +14,13 @@ abstract class TreeSet<V> extends SetMixin<V> implements Set<V> {
 
   static int _defaultCompare<V>(V a, V b) => (a as Comparable).compareTo(b);
 
-  BidirectionalIterator<V> fromIterator(V anchor,
+  Iterator<V> fromIterator(V anchor,
       {bool reversed = false, bool inclusive = true});
 
   @override
-  BidirectionalIterator<V> get iterator;
+  Iterator<V> get iterator;
 
-  BidirectionalIterator<V> get reverseIterator;
+  Iterator<V> get reverseIterator;
 
   @override
   bool get isEmpty => length == 0;
@@ -181,10 +181,10 @@ class AvlTreeSet<V> extends TreeSet<V> {
   }
 
   @override
-  BidirectionalIterator<V> get iterator => TreeIterator(this);
+  Iterator<V> get iterator => TreeIterator(this);
 
   @override
-  BidirectionalIterator<V> get reverseIterator =>
+  Iterator<V> get reverseIterator =>
       TreeIterator(this, reversed: true);
 
   @override
@@ -251,7 +251,7 @@ class AvlTreeSet<V> extends TreeSet<V> {
         }
       }
       if (hasMore1 || hasMore2) {
-        i1 = hasMore1 ? i1 : i2 as BidirectionalIterator<V>;
+        i1 = hasMore1 ? i1 : i2;
         do {
           set.add(i1.current);
         } while (i1.moveNext());
@@ -302,7 +302,7 @@ class AvlTreeSet<V> extends TreeSet<V> {
   }
 
   @override
-  BidirectionalIterator<V> fromIterator(V anchor,
+  Iterator<V> fromIterator(V anchor,
       {bool reversed = false, bool inclusive = true}) {
     return TreeIterator(this,
         anchor: anchor, reversed: reversed, inclusive: inclusive);
@@ -524,7 +524,7 @@ class AvlNode<V> {
   }
 }
 
-class TreeIterator<V> extends BidirectionalIterator<V> {
+class TreeIterator<V> implements Iterator<V> {
   final AvlTreeSet<V> tree;
   final bool reversed;
   final bool inclusive;
@@ -558,7 +558,6 @@ class TreeIterator<V> extends BidirectionalIterator<V> {
     return reversed ? _cursor!.movePrevious() : _cursor!.moveNext();
   }
 
-  @override
   bool movePrevious() {
     if (_cursor == null) {
       if (anchor == null) {
@@ -576,7 +575,7 @@ class TreeIterator<V> extends BidirectionalIterator<V> {
   }
 }
 
-class TreeCursor<V> extends BidirectionalIterator<V> {
+class TreeCursor<V> extends Iterator<V> {
   final AvlTreeSet<V> tree;
   final List<AvlNode<V>> _path = [];
   bool _lastMovedForward = true;
